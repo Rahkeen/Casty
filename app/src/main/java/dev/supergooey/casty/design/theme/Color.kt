@@ -1,4 +1,4 @@
-package dev.supergooey.casty.ui.theme
+package dev.supergooey.casty.design.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -1,7 +1,5 @@
 package dev.supergooey.casty.podcasts
 
-import dev.supergooey.casty.Podcast
-import kotlinx.coroutines.coroutineScope
 
 class PodcastRepository {
   private val podcasts = listOf(
@@ -29,3 +27,10 @@ class PodcastRepository {
     return podcasts.first { it.id == id }
   }
 }
+
+data class Podcast(
+  val id: Int,
+  val imageUrl: String,
+  val title: String
+)
+

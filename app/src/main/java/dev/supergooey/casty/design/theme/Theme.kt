@@ -1,4 +1,4 @@
-package dev.supergooey.casty.ui.theme
+package dev.supergooey.casty.design.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
