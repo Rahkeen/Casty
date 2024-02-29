@@ -10,6 +10,9 @@ activityCompose = "1.8.2"
 composeBom = "2024.02.01"
 circuit = "0.19.1"
 coil = "2.6.0"
+media3 = "1.2.1"
+squiggly-slider = "1.0.0"
+rss-parser = "6.0.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -26,9 +29,14 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
+androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3" }
+androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3" }
 
 circuit = { group = "com.slack.circuit", name = "circuit-foundation", version.ref = "circuit" }
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+squiggly-slider = { group = "me.saket.squigglyslider", name = "squigglyslider", version.ref = "squiggly-slider" }
+rss-parser = { group = "com.prof18.rssparser", name = "rssparser", version.ref = "rss-parser" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

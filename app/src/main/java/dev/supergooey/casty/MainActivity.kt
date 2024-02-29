@@ -10,17 +10,24 @@ import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import dev.supergooey.casty.design.theme.CastyTheme
-import dev.supergooey.casty.features.player.ui.PodcastPlayerPresenter
+import dev.supergooey.casty.features.downloader.domain.AddPodcastScreen
+import dev.supergooey.casty.features.downloader.ui.AddPodcast
+import dev.supergooey.casty.features.downloader.ui.AddPodcastPresenter
 import dev.supergooey.casty.features.player.domain.PodcastPlayerScreen
 import dev.supergooey.casty.features.player.ui.PodcastPlayer
-import dev.supergooey.casty.podcasts.PodcastRepository
+import dev.supergooey.casty.features.player.ui.PodcastPlayerPresenter
+import dev.supergooey.casty.podcasts.RealPodcastRepository
 
 class MainActivity : ComponentActivity() {
-  private val podcastRepository = PodcastRepository()
+  private val podcastRepository = RealPodcastRepository()
   private val circuit: Circuit = Circuit.Builder()
     .addPresenterFactory(PodcastPlayerPresenter.Factory(podcastRepository))
     .addUi<PodcastPlayerScreen, PodcastPlayerScreen.State> { state, _ ->
       PodcastPlayer(state = state)
+    }
+    .addPresenterFactory(AddPodcastPresenter.Factory(podcastRepository))
+    .addUi<AddPodcastScreen, AddPodcastScreen.State> { state, _ ->
+      AddPodcast(state = state)
     }
     .build()
 
@@ -29,7 +36,7 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
 
     setContent {
-      val backstack = rememberSaveableBackStack(root = PodcastPlayerScreen)
+      val backstack = rememberSaveableBackStack(root = AddPodcastScreen)
       val navigator = rememberCircuitNavigator(backStack = backstack) {}
 
       CastyTheme {
