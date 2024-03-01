@@ -1,10 +1,8 @@
 package dev.supergooey.casty.features.downloader.ui
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.EaseInOutCubic
-import androidx.compose.animation.core.EaseInOutQuad
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -12,7 +10,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,7 +28,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -51,7 +47,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -69,8 +64,8 @@ import dev.supergooey.casty.design.theme.Purple40
 import dev.supergooey.casty.design.theme.Purple80
 import dev.supergooey.casty.features.downloader.domain.AddPodcastScreen
 import dev.supergooey.casty.features.downloader.domain.PodcastState
-import dev.supergooey.casty.podcasts.Episode
-import dev.supergooey.casty.podcasts.Podcast
+import dev.supergooey.casty.data.podcasts.Episode
+import dev.supergooey.casty.data.podcasts.Podcast
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -341,7 +336,9 @@ private fun PodcastAlbumCover(
             .padding(vertical = 8.dp)
             .clickable {
               // navigate to player
-              selectEpisode(episode)
+              if (showEpisodes) {
+                selectEpisode(episode)
+              }
             },
           horizontalArrangement = Arrangement.SpaceBetween
         ) {

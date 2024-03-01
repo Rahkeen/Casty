@@ -7,7 +7,6 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,8 +45,6 @@ import dev.supergooey.casty.R
 import dev.supergooey.casty.design.theme.CastyTheme
 import dev.supergooey.casty.features.player.domain.EpisodeState
 import dev.supergooey.casty.features.player.domain.PodcastPlayerScreen
-import dev.supergooey.casty.podcasts.Episode
-import dev.supergooey.casty.podcasts.Podcast
 import me.saket.squiggles.SquigglySlider
 
 @Composable
@@ -55,50 +52,58 @@ fun PodcastPlayer(state: PodcastPlayerScreen.State) {
   val context = LocalContext.current
   val player = remember { ExoPlayer.Builder(context).build() }
 
-  LaunchedEffect(state.episode.id) {
-    player.setMediaItem(MediaItem.fromUri(state.episode.audioUrl))
-    player.prepare()
-  }
-
-  Column(
-    modifier = Modifier
-      .fillMaxSize()
-      .padding(32.dp),
-    verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-    horizontalAlignment = Alignment.CenterHorizontally
-  ) {
-    SpinningDisc(state.episode.imageUrl)
-    SquigglySlider(
-      colors = SliderDefaults.colors(
-        thumbColor = Color.Black,
-        activeTrackColor = Color.Black,
-        inactiveTrackColor = Color.Black
-      ),
-      value = 0.5f,
-      onValueChange = {},
-      squigglesSpec = SquigglySlider.SquigglesSpec(
-        strokeWidth = 4.dp,
-        wavelength = 24.dp,
-        amplitude = if (state.isPlaying) 2.dp else 0.dp
-      )
-    )
-
-    PodcastControls(
-      isPlaying = state.isPlaying,
-      actions = { action ->
-        when (action) {
-          PodcastPlayerScreen.Event.Pause -> {
-            player.pause()
-          }
-          PodcastPlayerScreen.Event.Play -> {
-            player.play()
-          }
-          else -> {}
-        }
-        state.eventSink(action)
+  when (state.episode) {
+    is EpisodeState.Disc -> {
+      LaunchedEffect(state.episode.id) {
+        player.setMediaItem(MediaItem.fromUri(state.episode.audioUrl))
+        player.prepare()
       }
-    )
+
+      Column(
+        modifier = Modifier
+          .fillMaxSize()
+          .padding(32.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally
+      ) {
+        SpinningDisc(state.episode.imageUrl)
+        SquigglySlider(
+          colors = SliderDefaults.colors(
+            thumbColor = Color.Black,
+            activeTrackColor = Color.Black,
+            inactiveTrackColor = Color.Black
+          ),
+          value = 0.5f,
+          onValueChange = {},
+          squigglesSpec = SquigglySlider.SquigglesSpec(
+            strokeWidth = 4.dp,
+            wavelength = 24.dp,
+            amplitude = if (state.isPlaying) 2.dp else 0.dp
+          )
+        )
+
+        PodcastControls(
+          isPlaying = state.isPlaying,
+          actions = { action ->
+            when (action) {
+              PodcastPlayerScreen.Event.Pause -> {
+                player.pause()
+              }
+              PodcastPlayerScreen.Event.Play -> {
+                player.play()
+              }
+              else -> {}
+            }
+            state.eventSink(action)
+          }
+        )
+      }
+    }
+    EpisodeState.Loading -> {
+      Box(modifier = Modifier.fillMaxSize())
+    }
   }
+
 }
 
 @Preview
@@ -106,7 +111,7 @@ fun PodcastPlayer(state: PodcastPlayerScreen.State) {
 private fun PodcastPlayerPreview() {
   PodcastPlayer(
     state = PodcastPlayerScreen.State(
-      episode = EpisodeState(
+      episode = EpisodeState.Disc(
         id = "dead-beef-dead-beef",
         title = "What's the Good Word?",
         audioUrl = "https://audio.transistor.fm/m/shows/43677/f86bb806f8390c44ea9e4eb475e80c0f.mp3",

@@ -2,6 +2,8 @@ plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.parcelize)
+  alias(libs.plugins.kotlin.ksp)
+  alias(libs.plugins.dagger.anvil)
 }
 
 android {
@@ -61,6 +63,12 @@ dependencies {
   implementation(libs.androidx.media3.exoplayer)
   implementation(libs.androidx.media3.common)
   implementation(libs.androidx.media3.session)
+
+  implementation(libs.room)
+  implementation(libs.room.ktx)
+  ksp(libs.room.ksp)
+
+  implementation(libs.dagger.core)
 
   implementation(libs.circuit)
   implementation(libs.coil)
