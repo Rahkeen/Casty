@@ -3,6 +3,7 @@ plugins {
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.kotlin.ksp)
+  alias(libs.plugins.dagger.anvil)
 }
 
 android {
@@ -66,6 +67,8 @@ dependencies {
   implementation(libs.room)
   implementation(libs.room.ktx)
   ksp(libs.room.ksp)
+
+  implementation(libs.dagger.core)
 
   implementation(libs.circuit)
   implementation(libs.coil)

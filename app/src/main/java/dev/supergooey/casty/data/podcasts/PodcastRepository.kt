@@ -9,15 +9,17 @@ import dev.supergooey.casty.data.db.PodcastDao
 import dev.supergooey.casty.data.rssclient.RssClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 
 interface PodcastRepository {
   fun getPodcasts(): Flow<Podcast>
-  fun getPodcast(id: String): Podcast
+  fun getPodcast(id: String): Flow<Podcast>
   suspend fun fetchPodcast(url: String): Podcast
   fun selectEpisode(podcastId: String, episodeId: String): Episode
 }
@@ -35,8 +37,11 @@ class RealPodcastRepository(
       .map { it.toPodcast() }
   }
 
-  override fun getPodcast(id: String): Podcast {
-    TODO()
+  override fun getPodcast(id: String): Flow<Podcast> {
+    return localPodcasts
+      .getPodcastWithEpisodes(id)
+      .filterNotNull()
+      .map { it.toPodcast() }
   }
 
   override suspend fun fetchPodcast(url: String): Podcast {

@@ -21,9 +21,12 @@ data class PodcastPlayerScreen(val podcastId: String, val episodeId: String) : S
   }
 }
 
-data class EpisodeState(
-  val id: String,
-  val title: String,
-  val audioUrl: String,
-  val imageUrl: String
-)
+sealed class EpisodeState {
+  data object Loading: EpisodeState()
+  data class Disc(
+    val id: String,
+    val title: String,
+    val audioUrl: String,
+    val imageUrl: String
+  ): EpisodeState()
+}
