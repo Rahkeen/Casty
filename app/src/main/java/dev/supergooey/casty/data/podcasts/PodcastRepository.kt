@@ -1,21 +1,22 @@
 package dev.supergooey.casty.data.podcasts
 
 import com.prof18.rssparser.model.RssChannel
+import com.squareup.anvil.annotations.ContributesBinding
+import com.squareup.anvil.annotations.ContributesTo
 import dev.supergooey.casty.data.db.EpisodeDao
 import dev.supergooey.casty.data.db.LocalEpisode
 import dev.supergooey.casty.data.db.LocalPodcast
 import dev.supergooey.casty.data.db.LocalPodcastWithEpisodes
 import dev.supergooey.casty.data.db.PodcastDao
 import dev.supergooey.casty.data.rssclient.RssClient
+import dev.supergooey.casty.di.AppScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
 interface PodcastRepository {
   fun getPodcasts(): Flow<Podcast>
@@ -24,7 +25,9 @@ interface PodcastRepository {
   fun selectEpisode(podcastId: String, episodeId: String): Episode
 }
 
-class RealPodcastRepository(
+@Singleton
+@ContributesBinding(AppScope::class)
+class RealPodcastRepository @Inject constructor(
   private val localPodcasts: PodcastDao,
   private val localEpisodes: EpisodeDao,
   private val rssClient: RssClient
