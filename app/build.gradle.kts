@@ -58,9 +58,14 @@ dependencies {
   implementation(libs.androidx.ui.graphics)
   implementation(libs.androidx.ui.tooling.preview)
   implementation(libs.androidx.material3)
+  implementation(libs.androidx.media3.exoplayer)
+  implementation(libs.androidx.media3.common)
+  implementation(libs.androidx.media3.session)
 
   implementation(libs.circuit)
   implementation(libs.coil)
+  implementation(libs.squiggly.slider)
+  implementation(libs.rss.parser)
 
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
