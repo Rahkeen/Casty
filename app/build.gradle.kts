@@ -2,6 +2,7 @@ plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.parcelize)
+  alias(libs.plugins.kotlin.kapt)
   alias(libs.plugins.kotlin.ksp)
   alias(libs.plugins.dagger.anvil)
 }
@@ -69,6 +70,7 @@ dependencies {
   ksp(libs.room.ksp)
 
   implementation(libs.dagger.core)
+  kapt(libs.dagger.compiler)
 
   implementation(libs.circuit)
   implementation(libs.coil)

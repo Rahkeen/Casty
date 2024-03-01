@@ -42,6 +42,7 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-ksp = { group = "androidx.room", name = "room-compiler", version.ref = "room"}
 
 dagger-core = { group = "com.google.dagger", name = "dagger", version.ref = "dagger" }
+dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
 
 circuit = { group = "com.slack.circuit", name = "circuit-foundation", version.ref = "circuit" }
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
@@ -52,6 +53,7 @@ rss-parser = { group = "com.prof18.rssparser", name = "rssparser", version.ref =
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin"}
 kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 dagger-anvil = { id = "com.squareup.anvil", version.ref = "anvil" }
 
