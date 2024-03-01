@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
@@ -12,9 +11,7 @@ import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import dev.supergooey.casty.features.player.domain.EpisodeState
 import dev.supergooey.casty.features.player.domain.PodcastPlayerScreen
-import dev.supergooey.casty.podcasts.Episode
-import dev.supergooey.casty.podcasts.PodcastRepository
-import java.util.UUID
+import dev.supergooey.casty.data.podcasts.PodcastRepository
 
 class PodcastPlayerPresenter(
   private val screen: PodcastPlayerScreen,

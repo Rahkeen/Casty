@@ -3,8 +3,6 @@ package dev.supergooey.casty.features.player.domain
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.screen.Screen
-import dev.supergooey.casty.podcasts.Episode
-import dev.supergooey.casty.podcasts.Podcast
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

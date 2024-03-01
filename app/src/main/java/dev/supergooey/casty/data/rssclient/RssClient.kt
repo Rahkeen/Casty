@@ -1,4 +1,4 @@
-package dev.supergooey.casty.rssclient
+package dev.supergooey.casty.data.rssclient
 
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.model.RssChannel

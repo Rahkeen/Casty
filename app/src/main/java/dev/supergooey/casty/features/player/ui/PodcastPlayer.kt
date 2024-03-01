@@ -7,7 +7,6 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,8 +45,6 @@ import dev.supergooey.casty.R
 import dev.supergooey.casty.design.theme.CastyTheme
 import dev.supergooey.casty.features.player.domain.EpisodeState
 import dev.supergooey.casty.features.player.domain.PodcastPlayerScreen
-import dev.supergooey.casty.podcasts.Episode
-import dev.supergooey.casty.podcasts.Podcast
 import me.saket.squiggles.SquigglySlider
 
 @Composable

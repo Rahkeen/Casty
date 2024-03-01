@@ -1,6 +1,7 @@
 package dev.supergooey.casty.features.downloader.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -13,7 +14,8 @@ import com.slack.circuit.runtime.screen.Screen
 import dev.supergooey.casty.features.downloader.domain.AddPodcastScreen
 import dev.supergooey.casty.features.downloader.domain.PodcastState
 import dev.supergooey.casty.features.player.domain.PodcastPlayerScreen
-import dev.supergooey.casty.podcasts.PodcastRepository
+import dev.supergooey.casty.data.podcasts.PodcastRepository
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class AddPodcastPresenter(
@@ -43,7 +45,10 @@ class AddPodcastPresenter(
   override fun present(): AddPodcastScreen.State {
     val scope = rememberCoroutineScope()
     var query by remember { mutableStateOf("") }
-    var podcastState by remember { mutableStateOf<PodcastState>(PodcastState.None) }
+    val podcastState by podcastRepository
+      .getPodcasts()
+      .map { PodcastState.Album(it) }
+      .collectAsState(initial = PodcastState.None)
 
     fun events(event: AddPodcastScreen.Event) {
       when (event) {
@@ -53,8 +58,7 @@ class AddPodcastPresenter(
 
         is AddPodcastScreen.Event.RequestPodcast -> {
           scope.launch {
-            val result = podcastRepository.fetchPodcast(event.url)
-            podcastState = PodcastState.Album(result)
+            podcastRepository.fetchPodcast(event.url)
           }
         }
 
