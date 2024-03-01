@@ -5,8 +5,6 @@ import dev.supergooey.casty.rssclient.RssClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-typealias LocalPodcastStore = LinkedHashMap<String, Podcast>
-
 interface PodcastRepository {
   fun getPodcasts(): List<Podcast>
   fun getPodcast(id: String): Podcast
@@ -14,32 +12,29 @@ interface PodcastRepository {
   fun selectEpisode(podcastId: String, episodeId: String): Episode
 }
 
-class RealPodcastRepository: PodcastRepository {
-
-  private val rssClient = RssClient()
-  private val localStore = LocalPodcastStore()
+class RealPodcastRepository(
+  private val rssClient: RssClient
+): PodcastRepository {
 
   override fun getPodcasts(): List<Podcast> {
-    return localStore.values.toList()
+    TODO()
   }
 
   override fun getPodcast(id: String): Podcast {
-    return localStore.getValue(id)
+    TODO()
   }
 
   override suspend fun fetchPodcast(url: String): Podcast {
     return withContext(Dispatchers.IO) {
       val podcast = rssClient.getRssFeed(url).toPodcast()
-      localStore[podcast.name] = podcast
+      // insert or update database with podcast data?
       podcast
     }
   }
 
   override fun selectEpisode(podcastId: String, episodeId: String): Episode {
-    val episode = localStore.getValue(podcastId).episodes.find { it.id == episodeId }
-    return episode!!
+    TODO()
   }
-
 }
 
 private fun RssChannel.toPodcast(): Podcast {
@@ -51,7 +46,7 @@ private fun RssChannel.toPodcast(): Podcast {
         id = item.guid!!,
         title = item.title!!,
         audioUrl = item.audio!!
-      )
+      )A
     }
   )
 }

@@ -17,9 +17,12 @@ import dev.supergooey.casty.features.player.domain.PodcastPlayerScreen
 import dev.supergooey.casty.features.player.ui.PodcastPlayer
 import dev.supergooey.casty.features.player.ui.PodcastPlayerPresenter
 import dev.supergooey.casty.podcasts.RealPodcastRepository
+import dev.supergooey.casty.rssclient.RssClient
 
 class MainActivity : ComponentActivity() {
-  private val podcastRepository = RealPodcastRepository()
+  private val podcastRepository = RealPodcastRepository(
+    rssClient = RssClient()
+  )
   private val circuit: Circuit = Circuit.Builder()
     .addPresenterFactory(PodcastPlayerPresenter.Factory(podcastRepository))
     .addUi<PodcastPlayerScreen, PodcastPlayerScreen.State> { state, _ ->
