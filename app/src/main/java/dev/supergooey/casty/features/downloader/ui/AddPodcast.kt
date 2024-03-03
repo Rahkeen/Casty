@@ -90,7 +90,11 @@ fun AddPodcast(state: AddPodcastScreen.State) {
           PodcastAlbumCover(
             podcast = podcastState.podcast,
             selectEpisode = { episode ->
-              state.eventSink(AddPodcastScreen.Event.SelectEpisode(podcastState.podcast, episode))
+              state.eventSink(
+                AddPodcastScreen.Event.SelectEpisode(
+                podcastState.podcast,
+                episode
+              ))
             }
           )
         }
@@ -150,17 +154,23 @@ private fun PodcastAlbumCoverPreview() {
           episodes = listOf(
             Episode(
               id = "1",
+              podcastId = "Mostly Technical",
               title = "What the Eff?",
+              albumArtUrl = "",
               audioUrl = ""
             ),
             Episode(
               id = "2",
+              podcastId = "Mostly Technical",
               title = "Holy Guacamole",
+              albumArtUrl = "",
               audioUrl = ""
             ),
             Episode(
               id = "3",
+              podcastId = "Mostly Technical",
               title = "Animation Basics",
+              albumArtUrl = "",
               audioUrl = ""
             ),
           )

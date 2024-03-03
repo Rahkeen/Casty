@@ -17,6 +17,7 @@ data class LocalEpisode(
   val podcastName: String,
   val title: String,
   val audioUrl: String,
+  val imageUrl: String,
 )
 
 data class LocalPodcastWithEpisodes(

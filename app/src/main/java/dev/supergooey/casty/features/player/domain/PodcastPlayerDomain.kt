@@ -6,7 +6,7 @@ import com.slack.circuit.runtime.screen.Screen
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class PodcastPlayerScreen(val podcastId: String, val episodeId: String) : Screen {
+data class PodcastPlayerScreen(val episodeId: String) : Screen {
   data class State(
     val episode: EpisodeState,
     val isPlaying: Boolean,

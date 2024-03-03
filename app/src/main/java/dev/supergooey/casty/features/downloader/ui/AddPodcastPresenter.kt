@@ -63,7 +63,7 @@ class AddPodcastPresenter(
         }
 
         is AddPodcastScreen.Event.SelectEpisode -> {
-          navigator.goTo(PodcastPlayerScreen(event.podcast.name, event.episode.id))
+          navigator.goTo(PodcastPlayerScreen(event.episode.id))
         }
       }
     }

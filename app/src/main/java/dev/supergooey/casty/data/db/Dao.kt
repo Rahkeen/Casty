@@ -24,6 +24,9 @@ interface PodcastDao {
 
 @Dao
 interface EpisodeDao {
+  @Query("SELECT * FROM episode WHERE id IS :id")
+  suspend fun getEpisode(id: String): LocalEpisode
+
   @Upsert
   fun upsertAll(vararg episodes: LocalEpisode)
 }

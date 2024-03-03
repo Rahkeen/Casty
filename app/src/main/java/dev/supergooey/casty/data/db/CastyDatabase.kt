@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 
 @Database(
   entities = [LocalPodcast::class, LocalEpisode::class],
-  version = 1,
+  version = 2,
   exportSchema = false
 )
 abstract class CastyDatabase: RoomDatabase() {

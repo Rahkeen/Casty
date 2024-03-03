@@ -1,11 +1,13 @@
 package dev.supergooey.casty.features.player.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -44,18 +46,20 @@ class PodcastPlayerPresenter(
   @Composable
   override fun present(): PodcastPlayerScreen.State {
     var isPlaying by remember { mutableStateOf(false) }
-    val episodeState by podcastRepository
-      .getPodcast(screen.podcastId)
-      .map { podcast ->
-        val episode = podcast.episodes.find { it.id == screen.episodeId }!!
-        EpisodeState.Disc(
-          id = episode.id,
-          title = episode.title,
-          audioUrl = episode.audioUrl,
-          imageUrl = podcast.imageUrl
-        )
-      }
-      .collectAsState(initial = EpisodeState.Loading)
+    var episodeState by remember { mutableStateOf<EpisodeState>(EpisodeState.Loading) }
+    val test = rememberRetained {
+
+    }
+
+    LaunchedEffect(Unit) {
+      val episode = podcastRepository.selectEpisode(screen.episodeId)
+      episodeState = EpisodeState.Disc(
+        id = episode.id,
+        title = episode.title,
+        audioUrl = episode.audioUrl,
+        imageUrl = episode.albumArtUrl
+      )
+    }
 
     return PodcastPlayerScreen.State(
       episode = episodeState,
