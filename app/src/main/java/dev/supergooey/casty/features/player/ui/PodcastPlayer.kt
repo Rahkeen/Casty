@@ -23,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -40,7 +41,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.SeekParameters
 import coil.compose.AsyncImage
 import dev.supergooey.casty.R
 import dev.supergooey.casty.design.theme.CastyTheme
@@ -48,16 +52,38 @@ import dev.supergooey.casty.features.player.domain.EpisodeState
 import dev.supergooey.casty.features.player.domain.PodcastPlayerScreen
 import me.saket.squiggles.SquigglySlider
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun PodcastPlayer(state: PodcastPlayerScreen.State) {
   val context = LocalContext.current
-  val player = remember { ExoPlayer.Builder(context).build() }
+  val player = remember {
+    ExoPlayer
+      .Builder(context)
+      .setSeekForwardIncrementMs(10000L)
+      .setSeekBackIncrementMs(10000L)
+      .build()
+  }
 
   when (state.episode) {
     is EpisodeState.Disc -> {
       LaunchedEffect(state.episode.id) {
         player.setMediaItem(MediaItem.fromUri(state.episode.audioUrl))
         player.prepare()
+      }
+
+      DisposableEffect(Unit) {
+        val listener = object : Player.Listener {
+          override fun onEvents(player: Player, events: Player.Events) {
+            super.onEvents(player, events)
+            val progress = player.currentPosition / player.duration.toFloat()
+            state.eventSink(PodcastPlayerScreen.Event.PlayerProgress(progress))
+          }
+        }
+
+        onDispose {
+          player.removeListener(listener)
+          player.release()
+        }
       }
 
       Column(
@@ -74,8 +100,15 @@ fun PodcastPlayer(state: PodcastPlayerScreen.State) {
             activeTrackColor = Color.Black,
             inactiveTrackColor = Color.Black
           ),
-          value = 0.5f,
-          onValueChange = {},
+          valueRange = 0f..1f,
+          value = state.progress,
+          onValueChange = {
+            state.eventSink(PodcastPlayerScreen.Event.Seek(it))
+          },
+          onValueChangeFinished = {
+            val position = player.duration * state.progress
+            player.seekTo(position.toLong())
+          },
           squigglesSpec = SquigglySlider.SquigglesSpec(
             strokeWidth = 4.dp,
             wavelength = 24.dp,
@@ -90,8 +123,17 @@ fun PodcastPlayer(state: PodcastPlayerScreen.State) {
               PodcastPlayerScreen.Event.Pause -> {
                 player.pause()
               }
+
               PodcastPlayerScreen.Event.Play -> {
                 player.play()
+              }
+
+              PodcastPlayerScreen.Event.FastForward -> {
+                player.seekForward()
+              }
+
+              PodcastPlayerScreen.Event.Rewind -> {
+                player.seekBack()
               }
               else -> {}
             }
@@ -100,6 +142,7 @@ fun PodcastPlayer(state: PodcastPlayerScreen.State) {
         )
       }
     }
+
     EpisodeState.Loading -> {
       Box(modifier = Modifier.fillMaxSize())
     }
@@ -122,7 +165,8 @@ private fun PodcastPlayerPreview() {
         audioUrl = "https://audio.transistor.fm/m/shows/43677/f86bb806f8390c44ea9e4eb475e80c0f.mp3",
         imageUrl = "https://images.transistor.fm/images/show/43677/full_1691582852-artwork.jpg"
       ),
-      isPlaying = false
+      isPlaying = false,
+      progress = 0f
     ) {}
   )
 }
@@ -210,8 +254,7 @@ private fun SpinningDisc(imageUrl: String) {
         easing = LinearEasing
 
       )
-    )
-    , label = "SpinningDisc_Rotation"
+    ), label = "SpinningDisc_Rotation"
   )
   Box(
     modifier = Modifier

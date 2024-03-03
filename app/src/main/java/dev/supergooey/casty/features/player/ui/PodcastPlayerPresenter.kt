@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,6 +50,8 @@ class PodcastPlayerPresenter(
   override fun present(): PodcastPlayerScreen.State {
     var isPlaying by remember { mutableStateOf(false) }
     var episodeState by remember { mutableStateOf<EpisodeState>(EpisodeState.Loading) }
+    var progress by remember { mutableFloatStateOf(0f) }
+
 
     LaunchedEffect(Unit) {
       val episode = podcastRepository.selectEpisode(screen.episodeId)
@@ -62,7 +65,8 @@ class PodcastPlayerPresenter(
 
     return PodcastPlayerScreen.State(
       episode = episodeState,
-      isPlaying = isPlaying
+      isPlaying = isPlaying,
+      progress = progress
     ) { event ->
       when (event) {
         PodcastPlayerScreen.Event.Pause -> {
@@ -82,6 +86,14 @@ class PodcastPlayerPresenter(
         PodcastPlayerScreen.Event.BackPressed -> {
           isPlaying = false
           navigator.pop()
+        }
+
+        is PodcastPlayerScreen.Event.Seek -> {
+          progress = event.progress
+        }
+
+        is PodcastPlayerScreen.Event.PlayerProgress -> {
+          progress = event.progress
         }
       }
     }

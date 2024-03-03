@@ -10,6 +10,7 @@ data class PodcastPlayerScreen(val episodeId: String) : Screen {
   data class State(
     val episode: EpisodeState,
     val isPlaying: Boolean,
+    val progress: Float,
     val eventSink: (Event) -> Unit
   ) : CircuitUiState
 
@@ -19,6 +20,8 @@ data class PodcastPlayerScreen(val episodeId: String) : Screen {
     data object Rewind: Event()
     data object FastForward: Event()
     data object BackPressed: Event()
+    data class Seek(val progress: Float): Event()
+    data class PlayerProgress(val progress: Float): Event()
   }
 }
 

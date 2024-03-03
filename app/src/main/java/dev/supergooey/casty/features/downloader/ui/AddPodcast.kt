@@ -367,7 +367,6 @@ private fun PodcastAlbumCover(
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable {
-              // navigate to player
               if (showEpisodes) {
                 selectEpisode(episode)
               }
