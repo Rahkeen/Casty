@@ -18,7 +18,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 interface PodcastRepository {
-  fun getPodcasts(): Flow<Podcast>
+  suspend fun getPodcasts(): List<Podcast>
   fun getPodcast(id: String): Flow<Podcast>
   suspend fun fetchPodcast(url: String): Podcast
   suspend fun selectEpisode(episodeId: String): Episode
@@ -32,11 +32,8 @@ class RealPodcastRepository @Inject constructor(
   private val rssClient: RssClient
 ): PodcastRepository {
 
-  override fun getPodcasts(): Flow<Podcast> {
-    return localPodcasts
-      .getAllPodcasts()
-      .filterNotNull()
-      .map { it.toPodcast() }
+  override suspend fun getPodcasts(): List<Podcast> {
+    return localPodcasts.getAllPodcasts().map { it.toPodcast() }
   }
 
   override fun getPodcast(id: String): Flow<Podcast> {

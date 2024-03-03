@@ -2,6 +2,7 @@
 
 package dev.supergooey.casty.features.player.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -104,6 +105,10 @@ fun PodcastPlayer(state: PodcastPlayerScreen.State) {
     }
   }
 
+  BackHandler {
+    player.stop()
+    state.eventSink(PodcastPlayerScreen.Event.BackPressed)
+  }
 }
 
 @Preview
