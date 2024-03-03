@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface PodcastDao {
   @Transaction
   @Query("SELECT * FROM podcast")
-  fun getAllPodcasts(): Flow<LocalPodcastWithEpisodes?>
+  suspend fun getAllPodcasts(): List<LocalPodcastWithEpisodes>
 
   @Transaction
   @Query("SELECT * FROM podcast WHERE name IS :name")

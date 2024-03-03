@@ -24,5 +24,5 @@ data object AddPodcastScreen: Screen {
 
 sealed class PodcastState {
   data object None: PodcastState()
-  data class Album(val podcast: Podcast): PodcastState()
+  data class Albums(val podcasts: List<Podcast>): PodcastState()
 }

@@ -20,7 +20,8 @@ import kotlinx.coroutines.flow.map
 
 class PodcastPlayerPresenter(
   private val screen: PodcastPlayerScreen,
-  private val podcastRepository: PodcastRepository
+  private val podcastRepository: PodcastRepository,
+  private val navigator: Navigator
 ) : Presenter<PodcastPlayerScreen.State> {
   class Factory(private val podcastRepository: PodcastRepository) : Presenter.Factory {
     override fun create(
@@ -32,7 +33,8 @@ class PodcastPlayerPresenter(
         is PodcastPlayerScreen -> {
           PodcastPlayerPresenter(
             screen = screen,
-            podcastRepository = podcastRepository
+            podcastRepository = podcastRepository,
+            navigator = navigator
           )
         }
 
@@ -47,9 +49,6 @@ class PodcastPlayerPresenter(
   override fun present(): PodcastPlayerScreen.State {
     var isPlaying by remember { mutableStateOf(false) }
     var episodeState by remember { mutableStateOf<EpisodeState>(EpisodeState.Loading) }
-    val test = rememberRetained {
-
-    }
 
     LaunchedEffect(Unit) {
       val episode = podcastRepository.selectEpisode(screen.episodeId)
@@ -78,6 +77,11 @@ class PodcastPlayerPresenter(
         }
 
         PodcastPlayerScreen.Event.Rewind -> {
+        }
+
+        PodcastPlayerScreen.Event.BackPressed -> {
+          isPlaying = false
+          navigator.pop()
         }
       }
     }

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package dev.supergooey.casty.features.downloader.ui
 
 import androidx.compose.animation.core.Animatable
@@ -8,6 +10,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -22,6 +25,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -86,17 +91,30 @@ fun AddPodcast(state: AddPodcastScreen.State) {
       contentAlignment = Alignment.Center
     ) {
       when (val podcastState = state.podcastState) {
-        is PodcastState.Album -> {
-          PodcastAlbumCover(
-            podcast = podcastState.podcast,
-            selectEpisode = { episode ->
-              state.eventSink(
-                AddPodcastScreen.Event.SelectEpisode(
-                podcastState.podcast,
-                episode
-              ))
+        is PodcastState.Albums -> {
+
+          val pagerState = rememberPagerState {
+            podcastState.podcasts.size
+          }
+
+          HorizontalPager(
+            modifier = Modifier.fillMaxSize(),
+            state = pagerState
+          ) { page ->
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+              PodcastAlbumCover(
+                podcast = podcastState.podcasts[page],
+                selectEpisode = { episode ->
+                  state.eventSink(
+                    AddPodcastScreen.Event.SelectEpisode(
+                      podcastState.podcasts[page],
+                      episode
+                    )
+                  )
+                }
+              )
             }
-          )
+          }
         }
 
         PodcastState.None -> {}
@@ -136,7 +154,11 @@ private fun AddPodcastPreview() {
     AddPodcast(
       state = AddPodcastScreen.State(
         requestUrl = "https://feeds.transistor.fm/mostly-technical",
-        podcastState = PodcastState.Album(Podcast(name = "Mostly Technical", imageUrl = ""))
+        podcastState = PodcastState.Albums(
+          listOf(
+            Podcast(name = "Mostly Technical", imageUrl = "")
+          )
+        )
       ) {}
     )
   }
@@ -339,7 +361,7 @@ private fun PodcastAlbumCover(
       verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
       horizontalAlignment = Alignment.Start
     ) {
-      podcast.episodes.takeLast(10).forEach { episode ->
+      podcast.episodes.take(10).forEach { episode ->
         Row(
           modifier = Modifier
             .fillMaxWidth()

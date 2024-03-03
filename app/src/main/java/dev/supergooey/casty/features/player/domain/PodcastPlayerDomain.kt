@@ -18,6 +18,7 @@ data class PodcastPlayerScreen(val episodeId: String) : Screen {
     data object Pause : Event()
     data object Rewind: Event()
     data object FastForward: Event()
+    data object BackPressed: Event()
   }
 }
 
