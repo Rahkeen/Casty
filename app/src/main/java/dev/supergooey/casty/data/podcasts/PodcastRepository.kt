@@ -2,7 +2,6 @@ package dev.supergooey.casty.data.podcasts
 
 import com.prof18.rssparser.model.RssChannel
 import com.squareup.anvil.annotations.ContributesBinding
-import com.squareup.anvil.annotations.ContributesTo
 import dev.supergooey.casty.data.db.EpisodeDao
 import dev.supergooey.casty.data.db.LocalEpisode
 import dev.supergooey.casty.data.db.LocalPodcast
@@ -22,7 +21,7 @@ interface PodcastRepository {
   fun getPodcasts(): Flow<Podcast>
   fun getPodcast(id: String): Flow<Podcast>
   suspend fun fetchPodcast(url: String): Podcast
-  fun selectEpisode(podcastId: String, episodeId: String): Episode
+  suspend fun selectEpisode(episodeId: String): Episode
 }
 
 @Singleton
@@ -52,15 +51,17 @@ class RealPodcastRepository @Inject constructor(
       val podcast = rssClient.getRssFeed(url).toPodcast()
       // insert or update database with podcast data?
       localPodcasts.upsert(podcast.toLocalPodcast())
-      val episodes = podcast.episodes.map { it.toLocalEpisode(podcast.name) }.toTypedArray()
+      val episodes = podcast.episodes.map(Episode::toLocalEpisode).toTypedArray()
       localEpisodes.upsertAll(*episodes)
       // return podcast
       podcast
     }
   }
 
-  override fun selectEpisode(podcastId: String, episodeId: String): Episode {
-    TODO()
+  override suspend fun selectEpisode(episodeId: String): Episode {
+    return withContext(Dispatchers.IO) {
+      localEpisodes.getEpisode(episodeId).toEpisode()
+    }
   }
 }
 
@@ -71,7 +72,9 @@ private fun RssChannel.toPodcast(): Podcast {
     episodes = items.map { item ->
       Episode(
         id = item.guid!!,
+        podcastId = title!!,
         title = item.title!!,
+        albumArtUrl = image?.url ?: "",
         audioUrl = item.audio!!
       )
     }
@@ -94,14 +97,17 @@ fun Podcast.toLocalPodcast(): LocalPodcast {
 data class Episode(
   val id: String,
   val title: String,
-  val audioUrl: String
+  val audioUrl: String,
+  val albumArtUrl: String,
+  val podcastId: String
 )
 
-fun Episode.toLocalEpisode(podcastName: String): LocalEpisode {
+fun Episode.toLocalEpisode(): LocalEpisode {
   return LocalEpisode(
     id = id,
-    podcastName = podcastName,
+    podcastName = podcastId,
     title = title,
+    imageUrl = albumArtUrl,
     audioUrl = audioUrl
   )
 }
@@ -109,7 +115,9 @@ fun Episode.toLocalEpisode(podcastName: String): LocalEpisode {
 fun LocalEpisode.toEpisode(): Episode {
   return Episode(
     id = id,
+    podcastId = podcastName,
     title = title,
+    albumArtUrl = imageUrl,
     audioUrl = audioUrl
   )
 }
