@@ -14,6 +14,7 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import dev.supergooey.casty.data.media.MediaClient
+import dev.supergooey.casty.data.media.MediaProgress
 import dev.supergooey.casty.features.player.domain.EpisodeState
 import dev.supergooey.casty.features.player.domain.PodcastPlayerScreen
 import dev.supergooey.casty.data.podcasts.PodcastRepository
@@ -56,7 +57,7 @@ class PodcastPlayerPresenter(
   override fun present(): PodcastPlayerScreen.State {
     var isPlaying by remember { mutableStateOf(false) }
     var episodeState by remember { mutableStateOf<EpisodeState>(EpisodeState.Loading) }
-    var progress by remember { mutableFloatStateOf(0f) }
+    val progress by mediaClient.progress().collectAsState(initial = MediaProgress(0L, 0L))
 
     LaunchedEffect(Unit) {
       val episode = podcastRepository.selectEpisode(screen.episodeId)
@@ -68,13 +69,12 @@ class PodcastPlayerPresenter(
         audioUrl = episode.audioUrl,
         imageUrl = episode.albumArtUrl
       )
-
     }
 
     return PodcastPlayerScreen.State(
       episode = episodeState,
       isPlaying = isPlaying,
-      progress = progress
+      progress = progress.percent
     ) { event ->
       when (event) {
         PodcastPlayerScreen.Event.Pause -> {
@@ -99,14 +99,6 @@ class PodcastPlayerPresenter(
           isPlaying = false
           mediaClient.stop()
           navigator.pop()
-        }
-
-        is PodcastPlayerScreen.Event.Seek -> {
-          progress = event.progress
-        }
-
-        is PodcastPlayerScreen.Event.PlayerProgress -> {
-          progress = event.progress
         }
       }
     }

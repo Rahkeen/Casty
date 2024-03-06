@@ -20,8 +20,6 @@ data class PodcastPlayerScreen(val episodeId: String) : Screen {
     data object Rewind: Event()
     data object FastForward: Event()
     data object BackPressed: Event()
-    data class Seek(val progress: Float): Event()
-    data class PlayerProgress(val progress: Float): Event()
   }
 }
 
@@ -34,3 +32,4 @@ sealed class EpisodeState {
     val imageUrl: String
   ): EpisodeState()
 }
+
