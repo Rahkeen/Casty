@@ -55,9 +55,8 @@ class PodcastPlayerPresenter(
 
   @Composable
   override fun present(): PodcastPlayerScreen.State {
-    var isPlaying by remember { mutableStateOf(false) }
     var episodeState by remember { mutableStateOf<EpisodeState>(EpisodeState.Loading) }
-    val progress by mediaClient.progress().collectAsState(initial = MediaProgress(0L, 0L))
+    val progress by mediaClient.progress().collectAsState(initial = MediaProgress(0L, 0L, false))
 
     LaunchedEffect(Unit) {
       val episode = podcastRepository.selectEpisode(screen.episodeId)
@@ -73,17 +72,15 @@ class PodcastPlayerPresenter(
 
     return PodcastPlayerScreen.State(
       episode = episodeState,
-      isPlaying = isPlaying,
+      isPlaying = progress.isPlaying,
       progress = progress.percent
     ) { event ->
       when (event) {
         PodcastPlayerScreen.Event.Pause -> {
-          isPlaying = false
           mediaClient.pause()
         }
 
         PodcastPlayerScreen.Event.Play -> {
-          isPlaying = true
           mediaClient.play()
         }
 
@@ -96,7 +93,6 @@ class PodcastPlayerPresenter(
         }
 
         PodcastPlayerScreen.Event.BackPressed -> {
-          isPlaying = false
           mediaClient.stop()
           navigator.pop()
         }

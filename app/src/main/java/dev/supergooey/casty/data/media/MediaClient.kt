@@ -16,7 +16,8 @@ import kotlin.math.roundToLong
 
 data class MediaProgress(
   val current: Long,
-  val duration: Long
+  val duration: Long,
+  val isPlaying: Boolean
 ) {
   val percent = if (duration == 0L) 0F else current.toFloat() / duration
 }
@@ -39,7 +40,8 @@ class MediaClient(context: Context) {
       override fun onEvents(player: Player, events: Player.Events) {
         val current = player.currentPosition
         val duration = player.duration
-        trySend(MediaProgress(current, duration))
+        val isPlaying = player.isPlaying
+        trySend(MediaProgress(current, duration, isPlaying))
       }
     }
 
