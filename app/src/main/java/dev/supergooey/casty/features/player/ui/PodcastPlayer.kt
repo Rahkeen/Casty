@@ -73,7 +73,9 @@ fun PodcastPlayer(state: PodcastPlayerScreen.State) {
           ),
           valueRange = 0f..1f,
           value = state.progress,
-          onValueChange = {},
+          onValueChange = {
+              state.eventSink(PodcastPlayerScreen.Event.Seek(it))
+          },
           onValueChangeFinished = {},
           squigglesSpec = SquigglySlider.SquigglesSpec(
             strokeWidth = 4.dp,

@@ -100,6 +100,10 @@ class PodcastPlayerPresenter(
           mediaClient.stop()
           navigator.pop()
         }
+
+        is PodcastPlayerScreen.Event.Seek -> {
+          mediaClient.seek(event.percent)
+        }
       }
     }
   }

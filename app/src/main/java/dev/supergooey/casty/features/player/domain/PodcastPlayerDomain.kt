@@ -20,6 +20,7 @@ data class PodcastPlayerScreen(val episodeId: String) : Screen {
     data object Rewind: Event()
     data object FastForward: Event()
     data object BackPressed: Event()
+    data class Seek(val percent: Float): Event()
   }
 }
 

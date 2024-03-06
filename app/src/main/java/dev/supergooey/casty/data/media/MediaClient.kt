@@ -12,6 +12,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
+import kotlin.math.roundToLong
 
 data class MediaProgress(
   val current: Long,
@@ -45,6 +46,13 @@ class MediaClient(context: Context) {
     mediaController.addListener(listener)
     awaitClose { mediaController.removeListener(listener) }
   }.buffer(capacity = Channel.UNLIMITED)
+
+  fun seek(percent: Float) {
+    // current = percent * duration
+    val duration = mediaController.duration
+    val current = (percent * duration).roundToLong()
+    mediaController.seekTo(current)
+  }
 
   fun loadEpisode(audioUrl: String) {
     val mediaItem = MediaItem.fromUri(audioUrl)
