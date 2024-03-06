@@ -55,37 +55,8 @@ import me.saket.squiggles.SquigglySlider
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun PodcastPlayer(state: PodcastPlayerScreen.State) {
-  val context = LocalContext.current
-  val player = remember {
-    ExoPlayer
-      .Builder(context)
-      .setSeekForwardIncrementMs(10000L)
-      .setSeekBackIncrementMs(10000L)
-      .build()
-  }
-
   when (state.episode) {
     is EpisodeState.Disc -> {
-      LaunchedEffect(state.episode.id) {
-        player.setMediaItem(MediaItem.fromUri(state.episode.audioUrl))
-        player.prepare()
-      }
-
-      DisposableEffect(Unit) {
-        val listener = object : Player.Listener {
-          override fun onEvents(player: Player, events: Player.Events) {
-            super.onEvents(player, events)
-            val progress = player.currentPosition / player.duration.toFloat()
-            state.eventSink(PodcastPlayerScreen.Event.PlayerProgress(progress))
-          }
-        }
-
-        onDispose {
-          player.removeListener(listener)
-          player.release()
-        }
-      }
-
       Column(
         modifier = Modifier
           .fillMaxSize()
@@ -102,13 +73,8 @@ fun PodcastPlayer(state: PodcastPlayerScreen.State) {
           ),
           valueRange = 0f..1f,
           value = state.progress,
-          onValueChange = {
-            state.eventSink(PodcastPlayerScreen.Event.Seek(it))
-          },
-          onValueChangeFinished = {
-            val position = player.duration * state.progress
-            player.seekTo(position.toLong())
-          },
+          onValueChange = {},
+          onValueChangeFinished = {},
           squigglesSpec = SquigglySlider.SquigglesSpec(
             strokeWidth = 4.dp,
             wavelength = 24.dp,
@@ -118,38 +84,18 @@ fun PodcastPlayer(state: PodcastPlayerScreen.State) {
 
         PodcastControls(
           isPlaying = state.isPlaying,
-          actions = { action ->
-            when (action) {
-              PodcastPlayerScreen.Event.Pause -> {
-                player.pause()
-              }
-
-              PodcastPlayerScreen.Event.Play -> {
-                player.play()
-              }
-
-              PodcastPlayerScreen.Event.FastForward -> {
-                player.seekForward()
-              }
-
-              PodcastPlayerScreen.Event.Rewind -> {
-                player.seekBack()
-              }
-              else -> {}
-            }
-            state.eventSink(action)
-          }
+          actions = { state.eventSink(it) }
         )
       }
     }
 
     EpisodeState.Loading -> {
+      // TODO loading state
       Box(modifier = Modifier.fillMaxSize())
     }
   }
 
   BackHandler {
-    player.stop()
     state.eventSink(PodcastPlayerScreen.Event.BackPressed)
   }
 }

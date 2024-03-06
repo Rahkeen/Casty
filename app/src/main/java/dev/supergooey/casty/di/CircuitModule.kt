@@ -4,6 +4,7 @@ import com.slack.circuit.foundation.Circuit
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
+import dev.supergooey.casty.data.media.MediaClient
 import dev.supergooey.casty.data.podcasts.PodcastRepository
 import dev.supergooey.casty.features.downloader.domain.AddPodcastScreen
 import dev.supergooey.casty.features.downloader.ui.AddPodcast
@@ -18,9 +19,12 @@ import dev.supergooey.casty.features.player.ui.PodcastPlayerPresenter
 object CircuitModule {
 
   @Provides
-  fun providesCircuit(repository: PodcastRepository): Circuit {
+  fun providesCircuit(
+    repository: PodcastRepository,
+    mediaClient: MediaClient,
+  ): Circuit {
     return Circuit.Builder()
-      .addPresenterFactory(PodcastPlayerPresenter.Factory(repository))
+      .addPresenterFactory(PodcastPlayerPresenter.Factory(repository, mediaClient))
       .addUi<PodcastPlayerScreen, PodcastPlayerScreen.State> { state, _ ->
         PodcastPlayer(state = state)
       }

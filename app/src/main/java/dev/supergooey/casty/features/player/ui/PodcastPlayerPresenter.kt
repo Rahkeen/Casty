@@ -13,6 +13,7 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import dev.supergooey.casty.data.media.MediaClient
 import dev.supergooey.casty.features.player.domain.EpisodeState
 import dev.supergooey.casty.features.player.domain.PodcastPlayerScreen
 import dev.supergooey.casty.data.podcasts.PodcastRepository
@@ -22,9 +23,13 @@ import kotlinx.coroutines.flow.map
 class PodcastPlayerPresenter(
   private val screen: PodcastPlayerScreen,
   private val podcastRepository: PodcastRepository,
+  private val mediaClient: MediaClient,
   private val navigator: Navigator
 ) : Presenter<PodcastPlayerScreen.State> {
-  class Factory(private val podcastRepository: PodcastRepository) : Presenter.Factory {
+  class Factory(
+    private val podcastRepository: PodcastRepository,
+    private val mediaClient: MediaClient
+  ) : Presenter.Factory {
     override fun create(
       screen: Screen,
       navigator: Navigator,
@@ -35,6 +40,7 @@ class PodcastPlayerPresenter(
           PodcastPlayerPresenter(
             screen = screen,
             podcastRepository = podcastRepository,
+            mediaClient = mediaClient,
             navigator = navigator
           )
         }
@@ -52,15 +58,17 @@ class PodcastPlayerPresenter(
     var episodeState by remember { mutableStateOf<EpisodeState>(EpisodeState.Loading) }
     var progress by remember { mutableFloatStateOf(0f) }
 
-
     LaunchedEffect(Unit) {
       val episode = podcastRepository.selectEpisode(screen.episodeId)
+      mediaClient.loadEpisode(episode.audioUrl)
+
       episodeState = EpisodeState.Disc(
         id = episode.id,
         title = episode.title,
         audioUrl = episode.audioUrl,
         imageUrl = episode.albumArtUrl
       )
+
     }
 
     return PodcastPlayerScreen.State(
@@ -71,20 +79,25 @@ class PodcastPlayerPresenter(
       when (event) {
         PodcastPlayerScreen.Event.Pause -> {
           isPlaying = false
+          mediaClient.pause()
         }
 
         PodcastPlayerScreen.Event.Play -> {
           isPlaying = true
+          mediaClient.play()
         }
 
         PodcastPlayerScreen.Event.FastForward -> {
+          mediaClient.forward()
         }
 
         PodcastPlayerScreen.Event.Rewind -> {
+          mediaClient.rewind()
         }
 
         PodcastPlayerScreen.Event.BackPressed -> {
           isPlaying = false
+          mediaClient.stop()
           navigator.pop()
         }
 
