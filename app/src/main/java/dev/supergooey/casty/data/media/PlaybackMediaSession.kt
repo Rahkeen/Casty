@@ -6,7 +6,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 
-class PlaybackMediaSession: MediaSessionService() {
+class PlaybackMediaSession : MediaSessionService() {
 
   private var mediaSession: MediaSession? = null
 
@@ -14,10 +14,10 @@ class PlaybackMediaSession: MediaSessionService() {
   override fun onCreate() {
     super.onCreate()
     val player = ExoPlayer
-        .Builder(this)
-        .setSeekForwardIncrementMs(10000L)
-        .setSeekBackIncrementMs(10000L)
-        .build()
+      .Builder(this)
+      .setSeekForwardIncrementMs(10000L)
+      .setSeekBackIncrementMs(10000L)
+      .build()
 
     mediaSession = MediaSession.Builder(this, player).build()
 
